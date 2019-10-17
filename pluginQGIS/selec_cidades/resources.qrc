@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/plugins/selec_cidades" >
+        <file>icon.png</file>
+    </qresource>
+</RCC>

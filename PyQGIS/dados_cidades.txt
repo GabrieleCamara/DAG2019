@@ -1,0 +1,54 @@
+Bela Vista do Paraíso,  -51.193084,  -22.994119
+Porecatu,  -51.379918,  -22.754189
+Alvorada do Sul,  -51.230136,  -22.781747
+Grandes Rios,  -51.509811,  -24.147074
+Kaloré,  -51.669142,  -23.819301
+Jandaia do Sul,  -51.645251,  -23.601555
+Borrazópolis,  -51.587940,  -23.937074
+Cruzmaltina,  -51.456763,  -24.013686
+Marumbi,  -51.640806,  -23.706230
+Novo Itacolomi,  -51.508322,  -23.763547
+Rio Bom,  -51.412671,  -23.761050
+Mandaguari,  -51.671459,  -23.545056
+Astorga,  -51.667208,  -23.232292
+Cambira,  -51.579583,  -23.589484
+Apucarana,  -51.463917,  -23.550427
+Arapongas,  -51.426350,  -23.415762
+Pitangueiras,  -51.587707,  -23.228599
+Sabáudia,  -51.555435,  -23.315978
+Jaguapitã,  -51.534625,  -23.110853
+Ortigueira,  -50.918937,  -24.206281
+Faxinal,  -51.323096,  -24.008139
+Mauá da Serra,  -51.228162,  -23.899229
+Marilândia do Sul,  -51.314167,  -23.743001
+Califórnia,  -51.357797,  -23.657054
+Tamarana,  -51.099483,  -23.720833
+Rolândia,  -51.366357,  -23.310586
+Cambé,  -51.280261,  -23.277041
+Londrina,  -51.169528,  -23.304442
+Ibiporã,  -51.052670,  -23.266408
+Jataizinho,  -50.978175,  -23.258282
+São Jerônimo da Serra,  -50.747963,  -23.722234
+Sapopema,  -50.580488,  -23.908302
+Figueira,  -50.403493,  -23.846012
+Nova Santa Bárbara,  -50.760224,  -23.587002
+Santa Cecília do Pavão,  -50.783954,  -23.520549
+São Sebastião da Amoreira,  -50.762962,  -23.466108
+Assaí,  -50.846351,  -23.370147
+Santo Antônio do Paraíso,  -50.645966,  -23.497371
+Uraí,  -50.794298,  -23.200464
+Leópolis,  -50.751510,  -23.082248
+Nova América da Colina,  -50.717246,  -23.331240
+Cornélio Procópio,  -50.650194,  -23.183379
+Congonhinhas,  -50.557297,  -23.549779
+Nova Fátima,  -50.566932,  -23.432916
+Guaraci,  -51.650836,  -22.969890
+Miraselva,  -51.485035,  -22.966128
+Prado Ferreira,  -51.443312,  -23.036163
+Florestópolis,  -51.388585,  -22.862728
+Sertanópolis,  -51.040374,  -23.057523
+Primeiro de Maio,  -51.029677,  -22.852180
+Rancho Alegre,  -50.914879,  -23.068061
+Sertaneja,  -50.832081,  -23.036562
+Bom Sucesso,  -51.767489,  -23.706779
+Marialva,  -51.793234,  -23.484781

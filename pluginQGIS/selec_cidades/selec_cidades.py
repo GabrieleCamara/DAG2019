@@ -30,6 +30,9 @@ from .resources import *
 # Import the code for the dialog
 from .selec_cidades_dialog import selec_cidadesDialog
 import os.path
+import psycopg2
+from qgis.core import *
+from qgis.utils import iface
 
 
 class selec_cidades:
@@ -66,7 +69,21 @@ class selec_cidades:
         # Check if plugin was started the first time in current QGIS session
         # Must be set in initGui() to survive plugin reloads
         self.first_start = None
-
+        
+        # Adicao das camadas
+        uri = QgsDataSourceUri()
+        uri.setConnection("localhost", "5432", "pyqgis", "postgres", "postgres")
+        uri.setDataSource("public", "mun_sirgas", "geom", "")
+        layer1 = QgsVectorLayer(uri.uri(), "mun_sirgas", "postgres")
+        # Adicionando layer ao prj
+        QgsProject.instance().addMapLayer(layer1)
+        # Atribuindo a simbologia
+        symbol = QgsFillSymbol.createSimple({'border_width_map_unit_scale': '3x:0,0,0,0,0,0', 'color': '244,226,196,255', 'joinstyle': 'bevel', 'offset': '0,0', 'offset_map_unit_scale': '3x:0,0,0,0,0,0', 'offset_unit': 'MM', 'outline_color': '175,179,138,255', 'outline_style': 'solid', 'outline_width': '0.26', 'outline_width_unit': 'MM', 'style': 'solid'})
+        layer1.renderer().setSymbol(symbol)
+        # mostrar as mudancas
+        layer1.triggerRepaint()
+        iface.layerTreeView().refreshLayerSymbology(layer1.id())
+        
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
         """Get the translation for a string using Qt translation API.
@@ -191,10 +208,59 @@ class selec_cidades:
 
         # show the dialog
         self.dlg.show()
+        # Limpando o combobox
+        self.dlg.comboBox.clear()
+        self.dlg.lineEdit.clear()
+        # Adicionando a lista de municipios no combobox
+        # Conexa com o banco de dados
+        conn = psycopg2.connect("dbname = 'pyqgis' port = '5432'  user= 'postgres' password = 'postgres' host='localhost'")
+        cursor = conn.cursor()
+        cursor.execute("""SELECT nm_municip FROM mun_sirgas;""")
+        mun = cursor.fetchall()
+        conn.commit()
+        cursor.close()
+        conn.close()
+        
+        for i in mun:
+            self.dlg.comboBox.addItem(i[0])
         # Run the dialog event loop
         result = self.dlg.exec_()
         # See if OK was pressed
         if result:
-            # Do something useful here - delete the line containing pass and
-            # substitute with your code.
+            mun_selec = self.dlg.comboBox.currentText()
+            dist = self.dlg.lineEdit.text()
+            conn = psycopg2.connect("dbname = 'pyqgis' port = '5432'  user= 'postgres' password = 'postgres' host='localhost'")
+            cursor = conn.cursor()
+            cursor.execute("""CREATE OR REPLACE VIEW mun_selec AS SELECT * FROM mun_sirgas WHERE mun_sirgas.nm_municip='%s';""" %(mun_selec))
+            conn.commit()
+            cursor.execute("""CREATE OR REPLACE VIEW cidades_selec AS SELECT cidades_novo.* FROM cidades_novo, mun_selec WHERE ST_DWithin(cidades_novo.geom, mun_selec.geom, %s);""" %(dist))
+            conn.commit()
+            cursor.close()
+            conn.close()
+            # Adicionando a camada do municipio selecionado
+            uri = QgsDataSourceUri()
+            uri.setConnection("localhost", "5432", "pyqgis", "postgres", "postgres")
+            uri.setDataSource("public", "mun_selec", "geom", "", "gid")
+            layer2 = QgsVectorLayer(uri.uri(), "mun_selec", "postgres")
+            QgsProject.instance().addMapLayer(layer2)
+            # Atribuindo a simbologia
+            symbol2 = QgsFillSymbol.createSimple({'border_width_map_unit_scale': '3x:0,0,0,0,0,0', 'color': '175,179,138,255', 'joinstyle': 'bevel', 'offset': '0,0', 'offset_map_unit_scale': '3x:0,0,0,0,0,0', 'offset_unit': 'MM', 'outline_color': '175,179,138,255', 'outline_style': 'solid', 'outline_width': '0.26', 'outline_width_unit': 'MM', 'style': 'solid'})
+            layer2.renderer().setSymbol(symbol2)
+            layer2.triggerRepaint()
+            # Adicionando as cidades selecionadas
+            uri.setDataSource("public", "cidades_selec", "geom", "", "gid")
+            layer3 = QgsVectorLayer(uri.uri(), "cidades_selec", "postgres")
+            QgsProject.instance().addMapLayer(layer3)
+            iface.layerTreeView().refreshLayerSymbology(layer2.id())
+            # Atribuindo a simbologia
+            symbol3 = QgsMarkerSymbol.createSimple({'angle': '0', 'color': '255,35,1,255', 'horizontal_anchor_point': '1', 'joinstyle': 'bevel', 'name': 'circle', 'offset': '0,0', 'offset_map_unit_scale': '3x:0,0,0,0,0,0', 'offset_unit': 'MM', 'outline_color': '88,88,88,255', 'outline_style': 'solid', 'outline_width': '0', 'outline_width_map_unit_scale': '3x:0,0,0,0,0,0', 'outline_width_unit': 'MM', 'scale_method': 'diameter', 'size': '2', 'size_map_unit_scale': '3x:0,0,0,0,0,0', 'size_unit': 'MM', 'vertical_anchor_point': '1'})
+            layer3.renderer().setSymbol(symbol3)
+            layer3.triggerRepaint()
+            iface.layerTreeView().refreshLayerSymbology(layer3.id())
+            
+            canvas = iface.mapCanvas() 
+            canvas.setExtent(layer3.extent())
+            layer3 = QgsProject.instance().mapLayersByName("cidades_selec")[0]
+            layer3.setLabelsEnabled(True)
+            layer3.triggerRepaint()
             pass

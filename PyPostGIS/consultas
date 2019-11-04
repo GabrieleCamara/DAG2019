@@ -1,0 +1,34 @@
+-- Consulta 1: Uma com os bairros adjacentes ao Centro
+CREATE OR REPLACE VIEW bairro_selection AS 
+SELECT divisa_de_bairros.* FROM divisa_de_bairros
+WHERE divisa_de_bairros.nome = 'CENTRO'
+
+CREATE OR REPLACE VIEW bairros_adja AS
+SELECT divisa_de_bairros.*
+FROM divisa_de_bairros, bairro_selection
+WHERE ST_Touches(divisa_de_bairros.geom, bairro_selection.geom)
+
+-- Consulta 2: Escolas municipais a até 1 km do centro
+CREATE OR REPLACE VIEW escola_selection AS
+SELECT escola_municipal.*
+FROM escola_municipal, bairro_selection
+WHERE ST_DWithin(escola_municipal.geom, bairro_selection.geom, 1000)
+
+
+-- Consulta 3: bairro no qual caem estas coordenadas: 679782.695,7188368.913
+CREATE OR REPLACE VIEW bairro_coord AS
+SELECT divisa_de_bairros.*
+FROM divisa_de_bairros
+WHERE ST_Contains(divisa_de_bairros.geom, ST_SetSRID(ST_MakePoint(679782.695,7188368.913),31982))
+
+-- Consulta 4: O usuário digita coordenadas de quatro pontos (LATITUDE E LONGITUDE), o programa calcula a área em metros dentro de cada bairro naquele polígono
+CREATE TABLE poligonos (id SERIAL NOT NULL PRIMARY KEY)
+SELECT AddGeometryColumn('poligonos', 'geom', 4326, 'POLYGON', 2)
+INSERT INTO poligonos (geom) VALUES (ST_GeometryFromText('POLYGON ((1 1, 1 2, 2 3, 3 1, 1 1))', 4326))
+
+SELECT * FROM poligonos
+
+CREATE OR REPLACE VIEW pol_intersec AS
+SELECT divisa_de_bairros.nome, ST_Intersection(divisa_de_bairros.geom, (ST_Transform(poligonos.geom, 31982))) AS geom,
+ ROW_NUMBER() OVER (ORDER BY divisa_de_bairros.geom) AS gid 
+ FROM divisa_de_bairros, poligonos
